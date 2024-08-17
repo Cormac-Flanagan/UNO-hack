@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UNO Game - Game Room</title>
+  <link rel="stylesheet" href="card.css">
+  <script src="gamePlay.js"></script>
+</head>
+<body>
+  <div class="game-container">
+    <!-- Logo and Room Code -->
+    <div class="top-section">
+      <div class="logo">
+        <img src="uno-logo.png" alt="UNO Logo">
+      </div>
+      <div class="room-code">
+        Room Code: <span id="roomCodeDisplay">123456</span>
+      </div>
+    </div>
+
+    <!-- User List with cards count -->
+    <div class="user-list">
+      <!-- Player data will be dynamically inserted here -->
+    </div>
+
+    <!-- Center cards (last played and card back) -->
+    <div class="center-cards">
+      <!-- The structure for the last played card and the card back -->
+      <div class="card last-played-card" id="lastPlayedCard"></div>
+      <div class="card card-back" id="cardBack"></div>
+    </div>
+
+    <!-- Player's cards carousel -->
+    <div class="carousel-container">
+      <button class="carousel-control left-arrow" onclick="scrollLeft()">&#9664;</button>
+      <div class="player-cards" id="cardContainer">
+        <!-- Player's hand will be dynamically inserted here -->
+      </div>
+      <button class="carousel-control right-arrow" onclick="scrollRight()">&#9654;</button>
+    </div>
+  </div>
+
+  <script type="module">
+    const cards = [
+      { special: false, color: 'blue', content: 7 },
+      { special: true, color: 'wild', content: '+4' },
+      { special: false, color: 'red', content: 3 },
+      { special: true, color: 'blue', content: 'skip' },
+      { special: false, color: 'green', content: 9 },
+      { special: false, color: 'yellow', content: 1 }, // Additional cards
+      { special: false, color: 'green', content: 6 }
+    ];
+
+    // Function to display a card
+    function createCardElement(card) {
+      const cardElement = document.createElement('div');
+      cardElement.classList.add('card', card.color);
+
+      const topLeftCorner = document.createElement('div');
+      topLeftCorner.classList.add('card-corner', 'top-left');
+      const bottomRightCorner = document.createElement('div');
+      bottomRightCorner.classList.add('card-corner', 'bottom-right');
+
+      const oval = document.createElement('div');
+      oval.classList.add('card-oval');
+
+      if (card.special) {
+        topLeftCorner.innerText = card.content;
+        bottomRightCorner.innerText = card.content;
+
+        const img = document.createElement('img');
+        img.src = `images/${card.content}.png`;
+        img.classList.add('special-img');
+        oval.appendChild(img);
+      } else {
+        topLeftCorner.innerText = card.content;
+        bottomRightCorner.innerText = card.content;
+
+        const centerContent = document.createElement('div');
+        centerContent.classList.add('card-center');
+        centerContent.innerText = card.content;
+        oval.appendChild(centerContent);
+      }
+
+      cardElement.appendChild(oval);
+      cardElement.appendChild(topLeftCorner);
+      cardElement.appendChild(bottomRightCorner);
+
+      return cardElement;
+    }
+
+    // Display player's cards
+    function displayUnoCards(cards) {
+      const cardContainer = document.getElementById('cardContainer');
+      cardContainer.innerHTML = '';  // Clear any existing cards
+
+      cards.forEach(card => {
+        const cardElement = createCardElement(card);
+        cardContainer.appendChild(cardElement);
+      });
+    }
+
+    // Set center cards (last played and card back)
+    function displayCenterCards() {
+      const lastPlayedCard = { special: false, color: 'yellow', content: 5 };
+      const cardBack = { special: true, color: 'wild', content: 'UNO' };
+
+      const lastPlayedCardElement = createCardElement(lastPlayedCard);
+      const cardBackElement = createCardElement(cardBack);
+
+      document.getElementById('lastPlayedCard').replaceWith(lastPlayedCardElement);
+      document.getElementById('cardBack').replaceWith(cardBackElement);
+    }
+
+    // Scroll the carousel left or right
+    // Scroll the carousel left or right
+    function scrollLeft() {
+      const container = document.getElementById('cardContainer');
+      container.scrollBy({ left: -container.offsetWidth, behavior: 'smooth' }); // Scroll by container's width to show full cards
+    }
+
+    function scrollRight() {
+      const container = document.getElementById('cardContainer');
+      container.scrollBy({ left: container.offsetWidth, behavior: 'smooth' }); // Scroll by container's width to show full cards
+    }
+
+
+    // Ensure the DOM is fully loaded before running the function
+    document.addEventListener('DOMContentLoaded', () => {
+      displayUnoCards(cards);
+      displayCenterCards();
+    });
+  </script>
+</body>
+</html>

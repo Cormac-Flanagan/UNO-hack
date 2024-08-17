@@ -1,0 +1,245 @@
+/* Global reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    background-color: rgb(218, 53, 46);
+}
+
+/* Game container layout */
+.game-container {
+    width: 80%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.top-section {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    gap: 10px; /* Add some space between the logo and room code */
+    text-align: center; /* Center the text inside room-code */
+    margin-top: 20px; /* Adjust spacing from top if needed */
+}
+
+
+/* Logo styling */
+.logo {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.logo img {
+    width: 100px; /* Adjust logo size */
+}
+
+/* User list (top-left) */
+.user-list {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+    border: 2px solid #000;
+}
+
+.user {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    width: 150px;
+}
+
+.username {
+    font-weight: bold;
+}
+
+.card-count {
+    font-size: 18px;
+}
+
+/* Highlight current player's turn */
+.current-turn {
+    border: 2px solid red;
+}
+
+/* Center cards (last played and card back) */
+.center-cards {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 50px 0;
+}
+
+.card {
+    width: 150px;
+    height: 200px;
+    border-radius: 15px;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 5px solid white;
+    overflow: hidden;
+    color: white; /* Default white text for corners */
+}
+
+
+
+/* Colors */
+.red {
+    background-color: red;
+}
+
+.blue {
+    background-color: blue;
+}
+
+.green {
+    background-color: green;
+}
+
+.yellow {
+    background-color: gold;
+}
+
+.wild {
+    background-color: black;
+}
+
+/* Card corner styles */
+.card-corner {
+    position: absolute;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.top-left {
+    top: 5px;
+    left: 8px;
+}
+
+.bottom-right {
+    bottom: 5px;
+    right: 8px;
+}
+
+/* White oval in the center */
+.card-oval {
+    width: 70px;
+    height: 100px;
+    background-color: white;
+    border-radius: 50%;
+    transform: rotate(45deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+}
+
+/* Card center content inside oval */
+.card-center {
+    transform: rotate(-45deg);
+    font-size: 48px;
+    font-weight: bold;
+}
+
+/* Specific colors for text inside oval */
+.red .card-center {
+    color: red;
+}
+
+.blue .card-center {
+    color: blue;
+}
+
+.green .card-center {
+    color: green;
+}
+
+.yellow .card-center {
+    color: gold;
+}
+
+/* Special card image */
+.special-img {
+    width: 50px;
+    height: 50px;
+    transform: rotate(-90deg);
+}
+
+/* Player's cards at the bottom */
+.player-cards {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.player-cards .card {
+    width: 120px;
+    height: 180px;
+}
+
+
+.carousel-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 80%; /* Adjust width as necessary */
+    margin: 0 auto; /* Center the carousel */
+    overflow: hidden; /* Hide overflowing half-cards */
+  }
+  
+  .player-cards {
+    display: flex;
+    overflow: hidden; /* Hide anything outside the container */
+    width: 500px; /* Ensure this width fits an exact number of cards */
+    padding: 10px;
+  }
+  
+  .player-cards .card {
+    min-width: 100px; /* Adjust this to fit your design */
+    height: 150px;
+    margin-right: 10px;
+  }
+  
+  .carousel-control {
+    background-color: transparent;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .left-arrow {
+    left: 0;
+  }
+  
+  .right-arrow {
+    right: 0;
+  }
+  
