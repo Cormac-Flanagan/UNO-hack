@@ -1,0 +1,64 @@
+/* Set the background color to rgb(218, 53, 46) */
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: rgb(218, 53, 46);
+}
+
+/* Center container */
+.container {
+  text-align: center;
+  background-color: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Logo styling */
+.logo img {
+  width: 150px; /* Adjust width as per your logo size */
+  margin-bottom: 20px;
+}
+
+/* Form styling */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Input field styling */
+input {
+  margin-bottom: 20px;
+  padding: 10px;
+  width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  text-align: center;
+}
+
+/* Button styling */
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: black; /* Button background color */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #333; /* Darker shade on hover */
+}
+
+/* Response message styling */
+#response {
+  margin-top: 20px;
+  color: green;
+}

@@ -1,0 +1,110 @@
+/* Global reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    background-color: rgb(218, 53, 46);
+  }
+  
+  .game-container {
+    width: 80%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .top-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Logo styling */
+  .logo {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .logo img {
+    width: 100px; /* Adjust logo size */
+  }
+  
+  /* User list (top-left) */
+  .user-list {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    background-color: white;
+    border: 2px;
+    border-radius: 10px;
+    border-color: #000;
+  }
+  
+  .user {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    width: 150px;
+  }
+  
+  .username {
+    font-weight: bold;
+  }
+  
+  .card-count {
+    font-size: 18px;
+  }
+  
+  /* Highlight current player's turn */
+  .current-turn {
+    border: 2px solid red;
+  }
+  
+  /* Center cards (last played and card back) */
+  .center-cards {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 50px 0;
+  }
+  
+  .card {
+    width: 120px;
+    height: 180px;
+    border-radius: 10px;
+    border: 1px solid #000;
+  }
+  
+  .card img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+  }
+  
+  /* Player's cards at the bottom */
+  .player-cards {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .player-cards .card {
+    width: 80px;
+    height: 120px;
+  }
+  
