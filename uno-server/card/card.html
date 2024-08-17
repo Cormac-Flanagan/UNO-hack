@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNO Cards</title>
+    <link rel="stylesheet" href="card.css">
+</head>
+<body>
+
+<div class="card-container" id="cardContainer"></div>
+
+<script>
+// Card data (from the JSON we generated)
+const deck = [
+    // Red number cards
+    { special: false, color: "red", content: 0 },
+    { special: false, color: "red", content: 1 },
+    { special: false, color: "red", content: 2 },
+    { special: false, color: "red", content: 3 },
+    { special: false, color: "red", content: 4 },
+    { special: false, color: "red", content: 5 },
+    { special: false, color: "red", content: 6 },
+    { special: false, color: "red", content: 7 },
+    { special: false, color: "red", content: 8 },
+    { special: false, color: "red", content: 9 },
+    { special: true, color: "red", content: "skip" },
+    { special: true, color: "red", content: "reverse" },
+    { special: true, color: "red", content: "+2" },
+
+    // Blue number cards
+    { special: false, color: "blue", content: 0 },
+    { special: false, color: "blue", content: 1 },
+    { special: false, color: "blue", content: 2 },
+    { special: false, color: "blue", content: 3 },
+    { special: false, color: "blue", content: 4 },
+    { special: false, color: "blue", content: 5 },
+    { special: false, color: "blue", content: 6 },
+    { special: false, color: "blue", content: 7 },
+    { special: false, color: "blue", content: 8 },
+    { special: false, color: "blue", content: 9 },
+    { special: true, color: "blue", content: "skip" },
+    { special: true, color: "blue", content: "reverse" },
+    { special: true, color: "blue", content: "+2" },
+
+    // Green number cards
+    { special: false, color: "green", content: 0 },
+    { special: false, color: "green", content: 1 },
+    { special: false, color: "green", content: 2 },
+    { special: false, color: "green", content: 3 },
+    { special: false, color: "green", content: 4 },
+    { special: false, color: "green", content: 5 },
+    { special: false, color: "green", content: 6 },
+    { special: false, color: "green", content: 7 },
+    { special: false, color: "green", content: 8 },
+    { special: false, color: "green", content: 9 },
+    { special: true, color: "green", content: "skip" },
+    { special: true, color: "green", content: "reverse" },
+    { special: true, color: "green", content: "+2" },
+
+    // Yellow number cards
+    { special: false, color: "yellow", content: 0 },
+    { special: false, color: "yellow", content: 1 },
+    { special: false, color: "yellow", content: 2 },
+    { special: false, color: "yellow", content: 3 },
+    { special: false, color: "yellow", content: 4 },
+    { special: false, color: "yellow", content: 5 },
+    { special: false, color: "yellow", content: 6 },
+    { special: false, color: "yellow", content: 7 },
+    { special: false, color: "yellow", content: 8 },
+    { special: false, color: "yellow", content: 9 },
+    { special: true, color: "yellow", content: "skip" },
+    { special: true, color: "yellow", content: "reverse" },
+    { special: true, color: "yellow", content: "+2" },
+
+    
+
+
+    // Wild cards
+    { special: true, color: "wild", content: "wild" },
+    { special: true, color: "wild", content: "+4" }
+
+
+];
+
+// Function to display UNO cards
+function displayUnoCards(cards) {
+    const cardContainer = document.getElementById('cardContainer');
+
+    cards.forEach(card => {
+        const cardDiv = document.createElement('div');
+        cardDiv.classList.add('card', card.color);
+
+        const topLeft = document.createElement('div');
+        topLeft.classList.add('card-corner', 'top-left');
+        topLeft.innerText = card.content;
+
+        const bottomRight = document.createElement('div');
+        bottomRight.classList.add('card-corner', 'bottom-right');
+        bottomRight.innerText =  card.content;
+
+        const centerOval = document.createElement('div');
+        centerOval.classList.add('card-oval');
+
+        const centerContent = document.createElement('div');
+        centerContent.classList.add('card-center');
+        if (card.special) {
+            const img = document.createElement('img');
+            img.src = `images/${card.content}.png`; // Add images named skip.png, reverse.png, etc.
+            img.alt = card.content;
+            img.classList.add('special-img');
+            centerContent.appendChild(img);
+        } else {
+            centerContent.innerText = card.content;
+        }
+
+        centerOval.appendChild(centerContent);
+        cardDiv.appendChild(topLeft);
+        cardDiv.appendChild(bottomRight);
+        cardDiv.appendChild(centerOval);
+        cardContainer.appendChild(cardDiv);
+    });
+}
+
+// Call the function to display the cards
+displayUnoCards(deck);
+
+</script>
+
+</body>
+</html>
