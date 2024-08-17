@@ -1,3 +1,4 @@
+pub mod train;
 pub mod uno;
 
 use std::io::prelude::*;
@@ -9,8 +10,9 @@ fn main() {
     let mut games: uno::Game = uno::Game::new();
     let args: Vec<String> = env::args().collect();
     match args.get(0) {
+        None => host(&mut rooms, &mut games),
         Some(x) if x == "-v" => println!("training"),
-        _ => host(&mut rooms, &mut games),
+        _ => println!("Invalid"),
     }
 }
 fn train(room: &mut u32, games: &mut uno::Game) {

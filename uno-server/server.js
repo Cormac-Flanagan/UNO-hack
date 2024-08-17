@@ -1,6 +1,8 @@
 const net = require('node:net');
 
+function parseCard(u8) {
 
+}
 // const client = net.createConnection({ host: '10.89.212.148', port: 8080 }, () => {
 const client = net.createConnection({ host: 'macdon.local', port: 8080 }, () => {
   console.log('Client connected');

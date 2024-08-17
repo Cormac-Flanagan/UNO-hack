@@ -205,6 +205,7 @@ impl Game {
         let mut state: Vec<u8> = vec![0x02, 0x01];
         for (i, val) in self.players.iter().enumerate() {
             for x in val.hand.iter() {
+                println!("{:?}", x);
                 state.push(((i as u8) << 6) | Game::bit_form(x))
             }
         }
@@ -237,8 +238,8 @@ impl Game {
         }
     }
     pub fn turn(&mut self, p_choice: usize, vol_skip: bool) -> Result<Card, GameErr> {
+        let player = self.turn % self.player_count;
         if !(self.skip_flag || vol_skip) {
-            let player = self.turn % self.player_count;
             let card = self.validate_card(player, p_choice);
             match card {
                 Err(a) => Err(a),

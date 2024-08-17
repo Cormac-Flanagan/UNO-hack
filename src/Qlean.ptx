@@ -1,0 +1,13 @@
+extern "C" __global__ void qlearning_kernal(float* q_table, int state, int action, float reward, int next_state, float alpha, float gamma, int num_actions) {
+	int idx = blockIdx.x * blockDim.x + threadIdx.x;
+
+	if (idx < num_actions) {
+        // Q-Learning formula: Q(s, a) = Q(s, a) + alpha * (reward + gamma * max(Q(s', a')) - Q(s, a))
+        float max_q_next = -INFINITY;
+        for (int a = 0; a < num_actions; a++) {
+            max_q_next = fmaxf(max_q_next, q_table[next_state * num_actions + a]);
+        }
+        float q_update = alpha * (reward + gamma * max_q_next - q_table[state * num_actions + action]);
+        q_table[state * num_actions + action] += q_update;
+    }
+}
