@@ -8,9 +8,20 @@ const io = socketIo(server);
 
 const port = 3000;
 
+app.use((req, res, next) => {
+    console.log('Request received: ' + req.url);
+    next() 
+});
+
+app.get('/room/:roomCode', (req, res) => {
+    const roomCode = req.params.roomCode;
+    res.sendFile(__dirname + '/public/tic-tac-toe.html');
+});
+
 app.use(express.static('public'));
 
-let lobbies = {};
+const lobbies = {};
+const games = {};
 
 io.on('connection', (socket) => {
     console.log('A player connected: ' + socket.id);
@@ -21,16 +32,47 @@ io.on('connection', (socket) => {
         socket.join(roomCode);
         
         if (!lobbies[roomCode]) {
-            lobbies[roomCode] = { roomCode: roomCode, players: [] };
+            lobbies[roomCode] = { roomCode: roomCode, players: [], spectators: [] };
         }
-        
-        lobbies[roomCode].players.push({ id: socket.id, name: name });
 
-        console.log(`${name} joined room: ${roomCode}`);
+        const room = lobbies[roomCode];
+
+        // Limit game to 2 active players, others are spectators
+        if (room.players.length < 2) {
+            room.players.push({ id: socket.id, name: name });
+            console.log(`${name} joined room as player: ${roomCode}`);
+        } else {
+            room.spectators.push({ id: socket.id, name: name });
+            console.log(`${name} joined room as spectator: ${roomCode}`);
+        }
+
         io.to(roomCode).emit('playerJoined', playerData);
-        
-        // Update lobby state for the room
+
+        // Update lobby state for everyone in the room
         io.to(roomCode).emit('updateLobbyState', lobbies[roomCode]);
+    });
+
+    // Handle the start of the game when a player clicks the button
+    socket.on('startGame', (data) => {
+        const { roomCode } = data;
+
+        // Notify all players in the room to redirect to the Tic-Tac-Toe page
+        io.to(roomCode).emit('redirectToGame');
+        console.log(`Game started in room: ${roomCode}`);
+    });
+
+    socket.on('playerMove', (moveData) => {
+        const { roomCode, index, symbol } = moveData;
+        const game = games[roomCode];
+
+        // If it's the player's turn and the cell is empty, update the board
+        if (game.isTurn && game.board[index] === '') {
+            game.board[index] = symbol;
+            game.isTurn = !game.isTurn;
+
+            // Broadcast the updated game state to both players and spectators
+            io.to(roomCode).emit('updateGameState', game);
+        }
     });
 
     socket.on('disconnect', () => {
@@ -38,21 +80,16 @@ io.on('connection', (socket) => {
 
         // Remove the player from the lobby they were in
         for (let roomCode in lobbies) {
-            lobbies[roomCode].players = lobbies[roomCode].players.filter(player => player.id !== socket.id);
-            io.to(roomCode).emit('updateLobbyState', lobbies[roomCode]);
+            let room = lobbies[roomCode];
+            room.players = room.players.filter(player => player.id !== socket.id);
+            room.spectators = room.spectators.filter(spectator => spectator.id !== socket.id);
+            io.to(roomCode).emit('updateLobbyState', room);
 
             // If the room is empty, delete it
-            if (lobbies[roomCode].players.length === 0) {
+            if (room.players.length === 0 && room.spectators.length === 0) {
                 delete lobbies[roomCode];
             }
         }
-    });
-
-    // Handle game-specific events (e.g., playerMove) and broadcast them to the room only
-    socket.on('playerMove', (moveData) => {
-        const { roomCode } = moveData;
-        // Validate and update game state here
-        io.to(roomCode).emit('updateGameState', moveData);
     });
 });
 

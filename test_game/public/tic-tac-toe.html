@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .tic-tac-toe {
+    text-align: center;
+    margin: 50px auto;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 10px;
+    margin: 20px auto;
+}
+
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    font-size: 24px;
+    cursor: pointer;
+    width: 100px;
+    height: 100px;
+}
+
+.cell:hover {
+    background-color: #ddd;
+}
+
+    </style>
+</head>
+<body>
+    <div class="tic-tac-toe">
+        <h1>Tic-Tac-Toe</h1>
+        <div id="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+        <div id="gameStatus"></div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const cells = document.querySelectorAll('.cell');
+
+        // Handle move click
+        cells.forEach(cell => {
+            cell.addEventListener('click', () => {
+                const index = cell.getAttribute('data-index');
+                socket.emit('makeMove', { roomCode: 'your-room-code', index: index });
+            });
+        });
+
+        // Update the board when a move is made
+        socket.on('updateBoard', (board) => {
+            cells.forEach((cell, i) => {
+                cell.textContent = board[i] || '';
+            });
+        });
+
+        // Game over handler
+        socket.on('gameOver', (data) => {
+            const status = data.winner !== null ? `Player ${data.winner + 1} wins!` : 'It\'s a tie!';
+            document.getElementById('gameStatus').textContent = status;
+        });
+    </script>
+</body>
+</html>
