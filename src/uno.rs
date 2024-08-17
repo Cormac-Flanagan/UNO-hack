@@ -125,7 +125,7 @@ fn all_cards() -> Vec<Card> {
 }
 
 pub struct Game {
-    room_code: [char; 6],
+    room_code: u32,
     top: Card,
     discard: Vec<Card>,
     deck: Vec<Card>,
@@ -141,7 +141,7 @@ pub struct Game {
 impl Default for Game {
     fn default() -> Self {
         Game {
-            room_code: [' ', 'T', 'E', 'S', 'T', ' '],
+            room_code: 0x00,
             deck: all_cards(),
             top: Card::Empty,
             discard: Vec::new(),
@@ -174,6 +174,12 @@ impl Game {
     pub fn new() -> Self {
         Default::default()
     }
+
+    pub fn set(&mut self, code: &u32, num_players: &u8) {
+        self.room_code = *code;
+        self.player_count = *num_players as usize;
+    }
+
     pub fn debug_game_state(&self) -> String {
         format!("{}", self.top)
     }
