@@ -68,30 +68,30 @@ impl fmt::Display for Card {
 }
 
 struct Hand {
-    deck: Vec<Card>,
+    hand: Vec<Card>,
 }
 
 impl Hand {
     fn new() -> Self {
         Hand {
-            deck: vec![Card::Empty],
+            hand: vec![Card::Empty],
         }
     }
     fn append(&mut self, add: &mut Vec<Card>) {
-        self.deck.append(add);
+        self.hand.append(add);
     }
     pub fn get(&mut self, index: usize) -> Option<&mut Card> {
-        self.deck.get_mut(index)
+        self.hand.get_mut(index)
     }
     pub fn remove(&mut self, index: usize) -> Card {
-        self.deck.remove(index)
+        self.hand.remove(index)
     }
 }
 
 impl fmt::Display for Hand {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let ret = self
-            .deck
+            .hand
             .iter()
             .map(|i| format!("{}", i))
             .collect::<Vec<_>>()
@@ -192,6 +192,24 @@ impl Game {
             .collect()
     }
 
+    fn bit_form(card: &Card) -> u8 {
+        match card {
+            Card::Regular { val, color } => val << 2 | color,
+            Card::Attack { name, color } => name << 2 | color,
+            Card::Meta { name, .. } => 1 << 5 | name,
+            Card::Empty => 0,
+        }
+    }
+
+    pub fn game_state(&self) -> Vec<u8> {
+        let mut state: Vec<u8> = vec![0x02, 0x01];
+        for (i, val) in self.players.iter().enumerate() {
+            for x in val.hand.iter() {
+                state.push(((i as u8) << 6) | Game::bit_form(x))
+            }
+        }
+        return state;
+    }
     pub fn init(&mut self) -> () {
         self.deck.shuffle(&mut self.rng);
         for i in 0..self.player_count as usize {
@@ -200,6 +218,7 @@ impl Game {
         }
         self.top = self.deck.remove(0);
     }
+
     fn select_card(&mut self, player: usize, index: usize) -> Option<Option<Card>> {
         let p_hand = self.players.get_mut(player);
         match p_hand {
