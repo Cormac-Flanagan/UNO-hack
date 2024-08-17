@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -9,50 +8,54 @@ const io = socketIo(server);
 
 const port = 3000;
 
-// Serve static files (e.g., the game interface)
 app.use(express.static('public'));
+
+let lobbies = {};
 
 io.on('connection', (socket) => {
     console.log('A player connected: ' + socket.id);
 
     // Handle player joining the game
     socket.on('joinGame', (playerData) => {
-        console.log(playerData.name + ' joined the game.');
-        // Broadcast the new player to others
-        io.emit('playerJoined', playerData);
-    });
+        const { name, roomCode } = playerData;
+        socket.join(roomCode);
+        
+        if (!lobbies[roomCode]) {
+            lobbies[roomCode] = { roomCode: roomCode, players: [] };
+        }
+        
+        lobbies[roomCode].players.push({ id: socket.id, name: name });
 
-    // Handle moves or actions
-    socket.on('playerMove', (moveData) => {
-        // Broadcast the move to all clients
-        io.emit('updateGameState', moveData);
+        console.log(`${name} joined room: ${roomCode}`);
+        io.to(roomCode).emit('playerJoined', playerData);
+        
+        // Update lobby state for the room
+        io.to(roomCode).emit('updateLobbyState', lobbies[roomCode]);
     });
 
     socket.on('disconnect', () => {
         console.log('Player disconnected: ' + socket.id);
+
+        // Remove the player from the lobby they were in
+        for (let roomCode in lobbies) {
+            lobbies[roomCode].players = lobbies[roomCode].players.filter(player => player.id !== socket.id);
+            io.to(roomCode).emit('updateLobbyState', lobbies[roomCode]);
+
+            // If the room is empty, delete it
+            if (lobbies[roomCode].players.length === 0) {
+                delete lobbies[roomCode];
+            }
+        }
+    });
+
+    // Handle game-specific events (e.g., playerMove) and broadcast them to the room only
+    socket.on('playerMove', (moveData) => {
+        const { roomCode } = moveData;
+        // Validate and update game state here
+        io.to(roomCode).emit('updateGameState', moveData);
     });
 });
 
 server.listen(port, '0.0.0.0', () => {
     console.log(`Server running on port ${port}`);
-});
-
-
-
-// server.js (continued)
-let gameState = {
-    players: [],
-    currentPlayer: 0,
-    moves: []
-};
-
-io.on('connection', (socket) => {
-    socket.on('playerMove', (moveData) => {
-        // Validate move, update game state
-        gameState.moves.push(moveData);
-        gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
-        
-        // Broadcast the updated game state
-        io.emit('updateGameState', gameState);
-    });
 });

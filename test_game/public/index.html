@@ -1,37 +1,31 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multiplayer Game</title>
+    <title>Multiplayer Game Lobby</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="game">
-        <h1>Multiplayer Game</h1>
-        <input type="text" id="playerName" placeholder="Enter your name">
-        <button onclick="joinGame()">Join Game</button>
-
-        <div id="gameState"></div>
+    <div class="container">
+        <div class="logo">
+            <img src="images/uno-logo.png" alt="Game Logo">
+        </div>
+        <div id="game">
+            <form id="joinForm">
+                <input type="text" id="playerName" placeholder="Enter your name" required>
+                <input type="text" id="roomCode" placeholder="Enter room code" required>
+                <button type="submit">Join Game</button>
+            </form>
+        </div>
+        <div id="lobby" style="display:none;">
+            <h1>Lobby Room: <span id="currentRoom"></span></h1>
+            <div id="lobbyPlayers"></div>
+        </div>
+        <div id="response"></div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io();
-
-        function joinGame() {
-            const playerName = document.getElementById('playerName').value;
-            socket.emit('joinGame', { name: playerName });
-        }
-
-        socket.on('playerJoined', (playerData) => {
-            const gameState = document.getElementById('gameState');
-            gameState.innerHTML += `<p>${playerData.name} joined the game!</p>`;
-        });
-
-        socket.on('updateGameState', (gameData) => {
-            // Update game state (e.g., moves, scores)
-        });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
