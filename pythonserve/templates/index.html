@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTMX Buttons from JSON</title>
+    <script src="https://unpkg.com/htmx.org@1.9.5/dist/htmx.min.js"></script>
+</head>
+<body>
+    <h1>Buttons from JSON Data</h1>
+    <!-- Button to trigger data fetch -->
+    <button hx-get="/data" hx-target="#content" hx-swap="innerHTML">Load Buttons</button>
+    
+    <!-- Container where header and buttons will be injected -->
+    <div id="content"></div>
+    
+    <script>
+    document.addEventListener('htmx:afterSwap', function(event) {
+        if (event.detail.target.id === 'content') {
+            const content = event.detail.target;
+            const data = JSON.parse(content.innerHTML);
+            
+            // Clear the content
+
+            // Add header
+            const header = document.createElement('h2');
+            header.textContent = data.top;
+            content.appendChild(header);
+
+            // Add buttons
+            console.log(data)
+            data.message.forEach(item => {
+                const button = document.createElement('button');
+                button.textContent = item.name;
+                button.onclick = () => alert(`Button ${item.name[0]} clicked`);
+                content.appendChild(button);
+            });
+        }
+    });
+    </script>
+</body>
+</html>
+
