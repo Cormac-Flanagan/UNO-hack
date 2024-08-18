@@ -29,14 +29,46 @@
 
             // Add buttons
             console.log(data)
+            const button = document.createElement('button');
+            button.textContent = "Skip";
+            button.id = -1
+            button.addEventListener('click', () =>
+                    sendCommand(button.id)
+                );
+            counter = 0
             data.message.forEach(item => {
                 const button = document.createElement('button');
-                button.textContent = item.name;
-                button.onclick = () => alert(`Button ${item.name[0]} clicked`);
+                button.textContent = item;
+                button.style.padding = '20px 40px'
+                button.id = counter
+                button.addEventListener('click', () =>
+                    sendCommand(button.id)
+                );
                 content.appendChild(button);
+                counter = counter + 1
             });
         }
     });
+
+    async function sendCommand(x) {
+        const command = x; // Replace with the actual command or data you want to send
+
+        try {
+            const response = await fetch('/command', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ choice: x+1 })
+            });
+
+            const result = await response.json();
+            console.log('Response from server:', result);
+            alert(`Server responded: ${result.message}`);
+        } catch (error) {
+            console.error('Error sending command:', error);
+        }
+    }
     </script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, session
+from flask import Flask, render_template, jsonify, session, request
 from flask_session import Session
 import socket
 
@@ -73,6 +73,16 @@ def color(x):
             return "B"
 
 
+@app.route("/command", methods=["POST"])
+def command():
+    data = request.json  # Get JSON data from the request
+    if data is not None:
+        command = data["command"]
+        # Process the command as needed
+        print(f"Received command: {command}")
+        return jsonify({"status": "success", "message": f"Command received: {command}"})
+
+
 @app.route("/data")
 def fetch_data():
     code = bytearray([0x0C, 0xDE, 0x00, 0x00, 0x00, 0x00, 0x04])
@@ -87,6 +97,7 @@ def fetch_data():
         if i < len(data) - 4:
             player_cards.append(data[i: i + 4])
     print(player_cards)
+
     for pos, i in enumerate(player_cards):
         if i[0] == session.get("user_id") or pos == 0:
             # print(i[1])
