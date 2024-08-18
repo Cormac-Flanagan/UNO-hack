@@ -6,7 +6,11 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-const port = 3000;
+const net = require('net');
+const client = new net.createConnection( { port: 8080, host: 'localhost' }, () => {
+    console.log('Connected to server');
+});
+const port = 3002
 
 app.use((req, res, next) => {
     console.log('Request received: ' + req.url);
@@ -22,12 +26,14 @@ app.use(express.static('public'));
 
 const lobbies = {};
 const games = {};
+players = 0;
 
 io.on('connection', (socket) => {
     console.log('A player connected: ' + socket.id);
 
     // Handle player joining the game
     socket.on('joinGame', (playerData) => {
+        players += 1;
         const { name, roomCode } = playerData;
         socket.join(roomCode);
         
@@ -36,7 +42,6 @@ io.on('connection', (socket) => {
         }
 
         const room = lobbies[roomCode];
-
         // Limit game to 2 active players, others are spectators
         if (room.players.length < 2) {
             room.players.push({ id: socket.id, name: name });
@@ -56,9 +61,25 @@ io.on('connection', (socket) => {
     socket.on('startGame', (data) => {
         const { roomCode } = data;
 
+        const msg = new Uint8Array([0x0C, 0xDE, roomCode>>24|0xFF, roomCode>>16|0xF, roomCode>>8|0xF, roomCode>>24|0xF, players]);
+        client.write(msg);
+
         // Notify all players in the room to redirect to the Tic-Tac-Toe page
         io.to(roomCode).emit('redirectToGame');
         console.log(`Game started in room: ${roomCode}`);
+    });
+    socket.on('makeMove', (data) => {
+        const { roomCode, index } = data;
+        
+        // Notify all players in the room to redirect to the Tic-Tac-Toe page
+        io.to(roomCode).emit('redirectToGame');
+        console.log(`Game started in room: ${roomCode}`);
+    });
+    socket.on('update', (data) => {
+        const { roomCode, index } = data;
+        
+        // Notify all players in the room to redirect to the Tic-Tac-Toe page
+        console.log(`Game started in room: ${index}`);
     });
 
     socket.on('playerMove', (moveData) => {
@@ -71,7 +92,7 @@ io.on('connection', (socket) => {
             game.isTurn = !game.isTurn;
 
             // Broadcast the updated game state to both players and spectators
-            io.to(roomCode).emit('updateGameState', game);
+            io.to(roomCode).emit('updateGame', game);
         }
     });
 

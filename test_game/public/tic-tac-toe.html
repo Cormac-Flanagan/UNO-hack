@@ -40,24 +40,52 @@
     <div class="tic-tac-toe">
         <h1>Tic-Tac-Toe</h1>
         <div id="board">
-            <div class="cell" data-index="0"></div>
-            <div class="cell" data-index="1"></div>
-            <div class="cell" data-index="2"></div>
-            <div class="cell" data-index="3"></div>
-            <div class="cell" data-index="4"></div>
-            <div class="cell" data-index="5"></div>
-            <div class="cell" data-index="6"></div>
-            <div class="cell" data-index="7"></div>
-            <div class="cell" data-index="8"></div>
+
         </div>
         <div id="gameStatus"></div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        function get_val(int) {
+            if (int>>5 | 1 == 1) {
+                switch (int >> 2 | 3 == 1) {
+                    case 0:
+                        return '+4';
+                    case 1:
+                        return 'wild';
+                    default:
+                        return 'E';
+                }
+            } else {
+                return get_color(int) + get_value(int);
+            }
+        }
+
+        function get_color(int) {
+            switch (int | 3) {
+                case 0:
+                    return 'B';
+                case 1:
+                    return 'Y';
+                case 2:
+                    return 'R';
+                default:
+                    return 'G';
+            }
+        }
+        function get_value(int) {
+            return int >> 2 | 4;
+        }
+
+        const button = document.querySelector('button');
+        button.addEventListener('click', () => {
+            alert('This is a simple Tic-Tac-Toe game. Click on a cell to make a move. The first player to get 3 in a row wins!');
+            socket.emit('update', { roomCode: 'your-room-code', msg: 'success' });
+        });
+
         const socket = io();
         const cells = document.querySelectorAll('.cell');
-
         // Handle move click
         cells.forEach(cell => {
             cell.addEventListener('click', () => {
@@ -68,9 +96,21 @@
 
         // Update the board when a move is made
         socket.on('updateBoard', (board) => {
-            cells.forEach((cell, i) => {
-                cell.textContent = board[i] || '';
-            });
+            const count = board.reduce((acc, cell) => acc + (cell !== null ? 1 : 0), 0);
+            const container = document.getElementById('board');
+
+            container.innerHTML = '';
+            for (let i = 0; i < board.length; i++) {
+                const cell = document.createElement('button');
+                cell.classList.add('cell');
+                cell.setAttribute('data-val', i);
+                cell.textContent = board[i] !== null ? board[i] : '';
+                cell.addEventListener('click', () => {
+                    val = 
+                    socket.emit('makeMove', { roomCode: 'your-room-code', card_id: });
+                });
+                container.appendChild(cell);
+            }
         });
 
         // Game over handler
