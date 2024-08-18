@@ -18,6 +18,10 @@ const client = net.createConnection({ host: 'macdon.local', port: 8080 }, () => 
   client.write(intro);
 });
 
+function(card_name, card_color) = {
+  //update the webpage
+}
+
 client.on('data', (data) => {
   console.log('Recieve from server:', data);
 });

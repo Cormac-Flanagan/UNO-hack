@@ -51,6 +51,7 @@ fn handle_connection(mut stream: TcpStream, room: &mut u32, game: &mut uno::Game
             game.init();
             let _ = stream.write_all(&game.game_state());
         }
+
         if cmds.get(0..2).unwrap() == [0x0Cu8, 0x11] {
             let val: usize = *cmds.get(5).unwrap() as usize;
             game_logic(game, val)

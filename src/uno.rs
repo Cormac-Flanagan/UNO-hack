@@ -238,7 +238,10 @@ impl Game {
         }
     }
     pub fn turn(&mut self, p_choice: usize, vol_skip: bool) -> Result<Card, GameErr> {
-        let player = self.turn % self.player_count;
+        let mut player = self.turn % self.player_count;
+        if self.reverse_flag {
+            player = self.player_count - player
+        }
         if !(self.skip_flag || vol_skip) {
             let card = self.validate_card(player, p_choice);
             match card {
@@ -252,6 +255,20 @@ impl Game {
                             return Err(a);
                         }
                         Ok(a) => {
+                            match a {
+                                Card::Meta { name, .. } => {
+                                    if name == 0x01 {
+                                        self.pickup += 4
+                                    }
+                                }
+                                Card::Attack { name, .. } if name == 0b00 => {
+                                    self.reverse_flag = true
+                                }
+
+                                Card::Attack { name, .. } if name == 0b01 => self.skip_flag = true,
+                                Card::Attack { name, .. } if name == 0b10 => self.pickup += 2,
+                                _ => {}
+                            }
                             self.top = a;
                             return Ok(a);
                         }
@@ -259,8 +276,25 @@ impl Game {
                 }
             }
         } else {
+            self.skip_flag = false;
+            self.pickup(player);
             Ok(Card::Empty)
         }
+    }
+    fn is_win(self, player: usize) -> bool {
+        return self.players.get(player).unwrap().hand.len() == 0;
+    }
+
+    fn pickup(&mut self, player: usize) {
+        let amount = self.pickup.max(1);
+        let mut top_deck = self.deck.drain(0..amount as usize).collect();
+        let _deck = self
+            .players
+            .get_mut(player)
+            .unwrap()
+            .hand
+            .append(&mut top_deck);
+        self.pickup = 0;
     }
 
     fn validate_card(&mut self, player: usize, player_choice: usize) -> Result<Card, GameErr> {
